@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang='en-GB'>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+        crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r"
+        crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        <div class="starter-template">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <img height="80" width="80" src="../public/folder.png">
+
+                    <BR>
+                    <BR> Welcome to media search!
+                    <BR/>
+                    <BR/> Now with data binding with <a href="http://www.ractivejs.org/">Ractive.js!</a>
+                    <BR/>
+                    <BR/>
+                    <div>Search: </div><input id="searchString" type="text" />&nbsp;
+                    <button id="searchBtn" onclick="sendSearch()">Search</button>
+                    <BR/>
+                    <BR/>
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div id='container'></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <!-- /.container -->
+
+    <script id='template' type='x-template'>
+        {{#if fileList.length != 0}}
+        <table class="table table-striped table-bordered" id="results">
+            <thead>
+                <tr>
+                    <th>Movie</th>
+                    <th>Path</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#fileList:num}}
+                <tr>
+                    <td>{{name}}</td>
+                    <td>{{path}}</td>
+                </tr>
+                {{/fileList}}
+            </tbody>
+        </table>
+        {{/if}}
+    </script>
+
+    <script>
+
+    var fileList = [];
+   function sendSearch() {
+        var searchString = $("#searchString").val();
+        if (searchString !== undefined) {
+            $.get( "files/"+searchString, function( data ) {
+             ractive.set('fileList',data.FileInfo);
+           });
+        }
+    }
+
+   $("#searchString").keyup(function(event){
+       if(event.keyCode == 13){
+          $("#searchBtn").click();
+       }
+   });
+
+    </script>
+
+    <script>
+    var ractive = new Ractive({
+        el: '#container',
+        template: '#template',
+        data: { fileList: fileList }
+      });
+    </script>
+
+</body>
+</html>
